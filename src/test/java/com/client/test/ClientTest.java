@@ -31,14 +31,14 @@ public class ClientTest {
 	public void testUpdateDate(){
 		try{
 			Map<Long,byte[]> searchData = new HashMap<Long,byte[]>();
-			for(Long i=11L ; i< 20;i++){
+			for(Long i=1L ; i< 10;i++){
 				Map<String,Object> data = new HashMap<String,Object>();
 				if(i % 2 == 0){
-					data.put("description", "中国天安门");
-					data.put("name", "安门");
+					data.put("description", "国天安");
+					data.put("name", "国天安");
 				}else{
 					data.put("description", "中国天");
-					data.put("name", "安门国中");
+					data.put("name", "中国天安门");
 				}
 				ObjectMapper objectMapper = new ObjectMapper();
 				byte[] json = objectMapper.writeValueAsBytes(data); 
