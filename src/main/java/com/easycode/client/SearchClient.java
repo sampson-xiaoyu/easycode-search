@@ -1,14 +1,12 @@
 package com.easycode.client;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
@@ -16,7 +14,6 @@ import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.lang3.StringUtils;
@@ -25,32 +22,27 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
-import org.elasticsearch.common.xcontent.json.JsonXContent;
-import org.elasticsearch.index.query.FilterBuilder;
-import org.elasticsearch.index.query.FilterBuilders;
-import org.elasticsearch.index.query.MatchQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.stereotype.Component;
+
+import com.easycode.client.config.Config;
 import com.easycode.exception.ClientInitException;
 
 @Component("searchClient")
 public final class SearchClient {
 	
-	@Resource(name = "appProps")
-	private Properties props;
-	
-	private TransportClient client = null;
+	private final TransportClient client;
 	
 	/**
 	 * 初始化客户端
 	 */
-	@PostConstruct
-	private void init(){	
+	public SearchClient(Config config){	
+		
+		Properties props = config.build();
+		
 		Settings settings = ImmutableSettings.settingsBuilder()
 	            .put("cluster.name", props.getProperty("search.cluster.name")).build();
 		client = new TransportClient(settings);
-		String nodes = props.getProperty("search.cluster.hosts");
+		String nodes = props.getProperty("search.cluster.nodes");
 		if(StringUtils.isEmpty(nodes)){
 			throw new ClientInitException("searchclient init error {} , search.cluster.hosts is null");
 		}	
